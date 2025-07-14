@@ -13,10 +13,10 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const CategorizeTransactionInputSchema = z.object({
-  description: z.string().describe('A short description of the transaction.'),
+  description: z.string().describe('Uma breve descrição da transação.'),
   existingCategories: z
     .array(z.string())
-    .describe('A list of existing income and expense categories.'),
+    .describe('Uma lista de categorias de receitas e despesas existentes.'),
 });
 export type CategorizeTransactionInput = z.infer<
   typeof CategorizeTransactionInputSchema
@@ -25,7 +25,7 @@ export type CategorizeTransactionInput = z.infer<
 const CategorizeTransactionOutputSchema = z.object({
   suggestedCategory: z
     .string()
-    .describe('The suggested category for the transaction.'),
+    .describe('A categoria sugerida para a transação.'),
 });
 export type CategorizeTransactionOutput = z.infer<
   typeof CategorizeTransactionOutputSchema
@@ -41,7 +41,7 @@ const prompt = ai.definePrompt({
   name: 'categorizeTransactionPrompt',
   input: {schema: CategorizeTransactionInputSchema},
   output: {schema: CategorizeTransactionOutputSchema},
-  prompt: `Given the following description of a transaction: """{{{description}}}""", and the following existing categories: {{{existingCategories}}}, suggest the most appropriate category for this transaction. Return ONLY the name of the category.`,
+  prompt: `Dada a seguinte descrição de uma transação: """{{{description}}}""", e as seguintes categorias existentes: {{{existingCategories}}}, sugira a categoria mais apropriada para esta transação. Retorne APENAS o nome da categoria.`,
 });
 
 const categorizeTransactionFlow = ai.defineFlow(

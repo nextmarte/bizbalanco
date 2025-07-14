@@ -12,9 +12,9 @@ import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
 
 const appointmentSchema = z.object({
-  title: z.string().min(1, "Title is required."),
-  startTime: z.string().min(1, "Start time is required."),
-  endTime: z.string().min(1, "End time is required."),
+  title: z.string().min(1, "O título é obrigatório."),
+  startTime: z.string().min(1, "A hora de início é obrigatória."),
+  endTime: z.string().min(1, "A hora de término é obrigatória."),
 });
 
 type AppointmentFormValues = z.infer<typeof appointmentSchema>;
@@ -48,8 +48,8 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
     onAppointmentAdded(data);
     onOpenChange(false);
     toast({
-        title: "Appointment Added",
-        description: "Your appointment has been successfully scheduled.",
+        title: "Compromisso Adicionado",
+        description: "Seu compromisso foi agendado com sucesso.",
     });
   };
 
@@ -57,8 +57,8 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Appointment</DialogTitle>
-          <DialogDescription>Fill in the details for your new appointment.</DialogDescription>
+          <DialogTitle>Adicionar Novo Compromisso</DialogTitle>
+          <DialogDescription>Preencha os detalhes para o seu novo compromisso.</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 pt-4">
@@ -67,9 +67,9 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>Título</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., Client Meeting" {...field} />
+                    <Input placeholder="ex: Reunião com Cliente" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -81,7 +81,7 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
                 name="startTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Start Time</FormLabel>
+                    <FormLabel>Hora de Início</FormLabel>
                     <FormControl>
                       <Input type="time" {...field} />
                     </FormControl>
@@ -94,7 +94,7 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
                 name="endTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>End Time</FormLabel>
+                    <FormLabel>Hora de Término</FormLabel>
                     <FormControl>
                       <Input type="time" {...field} />
                     </FormControl>
@@ -104,8 +104,8 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
               />
             </div>
             <DialogFooter className="pt-4">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button type="submit">Add Appointment</Button>
+              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+              <Button type="submit">Adicionar Compromisso</Button>
             </DialogFooter>
           </form>
         </Form>

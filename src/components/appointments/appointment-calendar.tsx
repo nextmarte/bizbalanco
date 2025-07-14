@@ -2,6 +2,7 @@
 
 import { Calendar } from "@/components/ui/calendar";
 import type { Appointment } from "@/lib/types";
+import { ptBR } from 'date-fns/locale';
 
 interface AppointmentCalendarProps {
   appointments: Appointment[];
@@ -18,6 +19,7 @@ export function AppointmentCalendar({
 
   return (
     <Calendar
+      locale={ptBR}
       mode="single"
       selected={selectedDate}
       onSelect={onDateChange}

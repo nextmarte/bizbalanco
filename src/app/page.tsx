@@ -46,17 +46,17 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Dashboard</h1>
-            <p className="text-muted-foreground">Here's a summary of your business finances.</p>
+            <h1 className="text-2xl font-bold">Painel</h1>
+            <p className="text-muted-foreground">Aqui está um resumo das finanças do seu negócio.</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setIsImportDialogOpen(true)}>
               <FileUp />
-              Import Data
+              Importar Dados
             </Button>
             <Button onClick={() => setIsSheetOpen(true)}>
               <PlusCircle />
-              Add Transaction
+              Adicionar Transação
             </Button>
           </div>
         </div>
@@ -78,17 +78,17 @@ export default function DashboardPage() {
         <Dialog open={isImportDialogOpen} onOpenChange={setIsImportDialogOpen}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Import Spreadsheet</DialogTitle>
+                    <DialogTitle>Importar Planilha</DialogTitle>
                     <DialogDescription>
-                        Upload a CSV file with your transactions. The file should have columns for: date, description, amount, type (revenue/expense), and category.
+                        Faça o upload de um arquivo CSV com suas transações. O arquivo deve ter colunas para: data, descrição, valor, tipo (receita/despesa) e categoria.
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4 py-4">
                     <Input type="file" accept=".csv" />
                 </div>
                 <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>Cancel</Button>
-                    <Button>Import</Button>
+                    <Button variant="outline" onClick={() => setIsImportDialogOpen(false)}>Cancelar</Button>
+                    <Button>Importar</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

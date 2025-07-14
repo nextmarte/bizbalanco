@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SidebarMenuButton asChild isActive={pathname === "/"}>
                 <Link href="/">
                   <Home />
-                  <span>Dashboard</span>
+                  <span>Painel</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -46,7 +46,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <SidebarMenuButton asChild isActive={pathname === "/appointments"}>
                 <Link href="/appointments">
                   <Calendar />
-                  <span>Appointments</span>
+                  <span>Compromissos</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -59,8 +59,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <AvatarFallback>U</AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-sm">
-                <span className="font-semibold">User</span>
-                <span className="text-muted-foreground">user@example.com</span>
+                <span className="font-semibold">Usuário</span>
+                <span className="text-muted-foreground">usuario@exemplo.com</span>
               </div>
               <Button variant="ghost" size="icon" className="ml-auto">
                 <LogOut />

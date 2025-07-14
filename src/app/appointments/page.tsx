@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { AppShell } from "@/components/app-shell";
 import { AppointmentCalendar } from "@/components/appointments/appointment-calendar";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -36,8 +37,8 @@ export default function AppointmentsPage() {
       <div className="flex flex-col gap-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Appointments</h1>
-            <p className="text-muted-foreground">Manage your schedule and appointments.</p>
+            <h1 className="text-2xl font-bold">Compromissos</h1>
+            <p className="text-muted-foreground">Gerencie sua agenda e compromissos.</p>
           </div>
         </div>
 
@@ -53,7 +54,7 @@ export default function AppointmentsPage() {
             <Card>
               <CardHeader>
                 <CardTitle>
-                  {selectedDate ? format(selectedDate, "MMMM d, yyyy") : "Select a date"}
+                  {selectedDate ? format(selectedDate, "d 'de' MMMM 'de' yyyy", { locale: ptBR }) : "Selecione uma data"}
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-4 h-96 overflow-y-auto">
@@ -66,14 +67,14 @@ export default function AppointmentsPage() {
                   ))
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
-                    <p>No appointments for this day.</p>
+                    <p>Nenhum compromisso para este dia.</p>
                   </div>
                 )}
               </CardContent>
               <CardFooter>
                  <Button className="w-full" onClick={() => setIsDialogOpen(true)} disabled={!selectedDate}>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Appointment
+                    Adicionar Compromisso
                 </Button>
               </CardFooter>
             </Card>

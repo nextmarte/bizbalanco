@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import type { Transaction } from "@/lib/types";
 import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { cn } from "@/lib/utils";
 
 interface RecentTransactionsProps {
@@ -13,23 +14,23 @@ interface RecentTransactionsProps {
 
 export function RecentTransactions({ transactions }: RecentTransactionsProps) {
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount);
     };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>Your most recent financial activities.</CardDescription>
+        <CardTitle>Transações Recentes</CardTitle>
+        <CardDescription>Suas atividades financeiras mais recentes.</CardDescription>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Description</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Descrição</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Data</TableHead>
+              <TableHead className="text-right">Valor</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -37,7 +38,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
               <TableRow key={transaction.id}>
                 <TableCell className="font-medium">{transaction.description}</TableCell>
                 <TableCell><Badge variant="outline">{transaction.category}</Badge></TableCell>
-                <TableCell>{format(transaction.date, 'MMM d, yyyy')}</TableCell>
+                <TableCell>{format(transaction.date, 'd MMM, yyyy', { locale: ptBR })}</TableCell>
                 <TableCell className={cn(
                     "text-right font-semibold",
                     transaction.type === 'revenue' ? 'text-green-600' : 'text-red-600'
@@ -49,7 +50,7 @@ export function RecentTransactions({ transactions }: RecentTransactionsProps) {
              {transactions.length === 0 && (
                 <TableRow>
                     <TableCell colSpan={4} className="h-24 text-center">
-                        No transactions yet.
+                        Nenhuma transação ainda.
                     </TableCell>
                 </TableRow>
             )}
