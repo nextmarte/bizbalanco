@@ -3,7 +3,7 @@
 import * as React from "react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
-import { FileUp, PlusCircle } from "lucide-react";
+import { FileDown, FileUp, PlusCircle } from "lucide-react";
 import { FinancialSummaryCards } from "@/components/dashboard/financial-summary-cards";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { AddTransactionSheet } from "@/components/dashboard/add-transaction-sheet";
@@ -11,6 +11,7 @@ import type { Transaction } from "@/lib/types";
 import { transactions as initialTransactions } from "@/lib/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { format } from "date-fns";
 
 export default function DashboardPage() {
   const [transactions, setTransactions] = React.useState<Transaction[]>(initialTransactions);
@@ -40,6 +41,30 @@ export default function DashboardPage() {
       ...prev,
     ]);
   };
+  
+  const handleExportTransactions = () => {
+    const csvHeader = "ID,Tipo,Descricao,Valor,Data,Categoria\n";
+    const csvRows = transactions.map(t => 
+        [
+            t.id,
+            t.type === 'revenue' ? 'Receita' : 'Despesa',
+            `"${t.description.replace(/"/g, '""')}"`,
+            t.amount,
+            format(t.date, 'yyyy-MM-dd'),
+            `"${t.category.replace(/"/g, '""')}"`
+        ].join(',')
+    ).join('\n');
+
+    const csvContent = csvHeader + csvRows;
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "transacoes.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <AppShell>
@@ -53,6 +78,10 @@ export default function DashboardPage() {
             <Button variant="outline" onClick={() => setIsImportDialogOpen(true)}>
               <FileUp />
               Importar Dados
+            </Button>
+            <Button variant="outline" onClick={handleExportTransactions}>
+              <FileDown />
+              Exportar Transações
             </Button>
             <Button onClick={() => setIsSheetOpen(true)}>
               <PlusCircle />
