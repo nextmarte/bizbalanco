@@ -46,12 +46,16 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
   }, [isOpen, form]);
 
   const onSubmit = async (data: AppointmentFormValues) => {
-    await onAppointmentAdded(data);
-    onOpenChange(false);
-    toast({
-        title: "Compromisso Adicionado",
-        description: "Seu compromisso foi agendado com sucesso.",
-    });
+    try {
+      await onAppointmentAdded(data);
+      onOpenChange(false);
+      toast({
+          title: "Compromisso Adicionado",
+          description: "Seu compromisso foi agendado com sucesso.",
+      });
+    } catch (e) {
+      // Errors are handled in the parent component
+    }
   };
 
   return (
@@ -105,7 +109,7 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
               />
             </div>
             <DialogFooter className="pt-4">
-              <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
+              <Button variant="outline" type="button" onClick={() => onOpenChange(false)}>Cancelar</Button>
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Adicionar Compromisso

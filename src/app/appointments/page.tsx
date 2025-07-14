@@ -52,7 +52,7 @@ export default function AppointmentsPage() {
     try {
         const appointmentData = { ...newAppointment, date: selectedDate };
         const addedAppointment = await addAppointment(appointmentData);
-        setAppointments(prev => [...prev, addedAppointment].sort((a, b) => b.date.getTime() - a.date.getTime()));
+        setAppointments(prev => [...prev, addedAppointment].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
         console.error("Failed to add appointment:", error);
         toast({
