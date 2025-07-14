@@ -37,14 +37,13 @@ export default function AppointmentsPage() {
         setLoading(false);
       }
     }
-    // O serviço de inicialização garante que isso só execute após a conexão com o Firebase
     loadData();
   }, [toast]);
 
   const selectedDayAppointments = React.useMemo(() => {
     if (!selectedDate) return [];
     return appointments.filter(
-      (appointment) => format(appointment.date, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
+      (appointment) => format(new Date(appointment.date), "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd")
     ).sort((a, b) => a.startTime.localeCompare(b.startTime));
   }, [appointments, selectedDate]);
 

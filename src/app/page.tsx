@@ -80,7 +80,7 @@ export default function DashboardPage() {
             t.type === 'revenue' ? 'Receita' : 'Despesa',
             `"${t.description.replace(/"/g, '""')}"`,
             t.amount,
-            format(t.date, 'yyyy-MM-dd'),
+            format(new Date(t.date), 'yyyy-MM-dd'),
             `"${t.category.replace(/"/g, '""')}"`
         ].join(',')
     ).join('\n');

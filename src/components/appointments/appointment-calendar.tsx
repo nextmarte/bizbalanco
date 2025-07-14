@@ -15,7 +15,7 @@ export function AppointmentCalendar({
   selectedDate,
   onDateChange,
 }: AppointmentCalendarProps) {
-  const appointmentDates = appointments.map(app => app.date);
+  const appointmentDates = appointments.map(app => new Date(app.date));
 
   return (
     <Calendar
@@ -35,7 +35,7 @@ export function AppointmentCalendar({
       }}
       components={{
         DayContent: (props) => {
-            const hasAppointment = appointmentDates.some(d => new Date(d).toDateString() === props.date.toDateString());
+            const hasAppointment = appointmentDates.some(d => d.toDateString() === props.date.toDateString());
             return (
                 <div className="relative">
                     {props.date.getDate()}
