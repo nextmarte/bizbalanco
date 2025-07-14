@@ -62,7 +62,8 @@ Assistente:`;
       history: input.messages.map(m => ({ role: m.role, content: [{ text: m.content }] })),
       model: 'googleai/gemini-2.0-flash',
       context: {
-        transactions: input.transactions
+        transactions: input.transactions,
+        messages: input.messages,
       }
     });
     
