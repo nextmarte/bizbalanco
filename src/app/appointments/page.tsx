@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -12,8 +13,12 @@ import type { Appointment } from "@/lib/types";
 import { AddAppointmentDialog } from "@/components/appointments/add-appointment-dialog";
 import { getAppointments, addAppointment } from "@/lib/services";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function AppointmentsPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [appointments, setAppointments] = React.useState<Appointment[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [selectedDate, setSelectedDate] = React.useState<Date | undefined>(new Date());
@@ -21,10 +26,15 @@ export default function AppointmentsPage() {
   const { toast } = useToast();
 
   React.useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     async function loadData() {
       try {
         setLoading(true);
-        const fetchedAppointments = await getAppointments();
+        const fetchedAppointments = await getAppointments(user!.uid);
         setAppointments(fetchedAppointments);
       } catch (error) {
         console.error("Failed to fetch appointments:", error);
@@ -38,7 +48,7 @@ export default function AppointmentsPage() {
       }
     }
     loadData();
-  }, [toast]);
+  }, [user, router, toast]);
 
   const selectedDayAppointments = React.useMemo(() => {
     if (!selectedDate) return [];
@@ -47,7 +57,7 @@ export default function AppointmentsPage() {
     ).sort((a, b) => a.startTime.localeCompare(b.startTime));
   }, [appointments, selectedDate]);
 
-  const handleAddAppointment = async (newAppointment: Omit<Appointment, 'id' | 'date'>) => {
+  const handleAddAppointment = async (newAppointment: Omit<Appointment, 'id' | 'userId' | 'date'>) => {
     if (!selectedDate) {
         toast({
             variant: "destructive",
@@ -56,9 +66,11 @@ export default function AppointmentsPage() {
         });
         return;
     }
+    if (!user) return;
+    
     try {
         const appointmentData = { ...newAppointment, date: selectedDate };
-        const addedAppointment = await addAppointment(appointmentData);
+        const addedAppointment = await addAppointment(appointmentData, user.uid);
         setAppointments(prev => [...prev, addedAppointment].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
         console.error("Failed to add appointment:", error);
@@ -69,6 +81,10 @@ export default function AppointmentsPage() {
         });
     }
   };
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
 
   return (
     <AppShell>

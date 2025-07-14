@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -33,7 +34,7 @@ type TransactionFormValues = z.infer<typeof transactionSchema>;
 interface AddTransactionSheetProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onTransactionAdded: (transaction: Omit<Transaction, "id">) => Promise<void>;
+  onTransactionAdded: (transaction: Omit<Transaction, "id" | "userId">) => Promise<void>;
 }
 
 export function AddTransactionSheet({ isOpen, onOpenChange, onTransactionAdded }: AddTransactionSheetProps) {

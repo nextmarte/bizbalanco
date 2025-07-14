@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -23,7 +24,7 @@ type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 interface AddAppointmentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onAppointmentAdded: (appointment: Omit<Appointment, 'id' | 'date'>) => Promise<void>;
+  onAppointmentAdded: (appointment: Omit<Appointment, 'id' | 'userId' | 'date'>) => Promise<void>;
   selectedDate: Date | undefined;
 }
 

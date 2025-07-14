@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -13,8 +14,12 @@ import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
 import { getTransactions, addTransaction } from "@/lib/services";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [transactions, setTransactions] = React.useState<Transaction[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
@@ -22,10 +27,15 @@ export default function DashboardPage() {
   const { toast } = useToast();
 
   React.useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     async function loadData() {
       try {
         setLoading(true);
-        const fetchedTransactions = await getTransactions();
+        const fetchedTransactions = await getTransactions(user!.uid);
         setTransactions(fetchedTransactions);
       } catch (error) {
         console.error("Failed to fetch transactions:", error);
@@ -39,7 +49,7 @@ export default function DashboardPage() {
       }
     }
     loadData();
-  }, [toast]);
+  }, [user, router, toast]);
 
   const { totalRevenue, totalExpenses, totalProfit } = React.useMemo(() => {
     let revenue = 0;
@@ -58,10 +68,10 @@ export default function DashboardPage() {
     };
   }, [transactions]);
 
-  const handleAddTransaction = async (newTransaction: Omit<Transaction, 'id'>) => {
+  const handleAddTransaction = async (newTransaction: Omit<Transaction, 'id' | 'userId'>) => {
+    if (!user) return;
     try {
-      const addedTransaction = await addTransaction(newTransaction);
-      // Sort by date descending to keep the list ordered
+      const addedTransaction = await addTransaction(newTransaction, user.uid);
       setTransactions(prev => [...prev, addedTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
       console.error("Failed to add transaction:", error);
@@ -96,6 +106,10 @@ export default function DashboardPage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  if (!user) {
+    return null; // or a loading spinner
+  }
 
   return (
     <AppShell>

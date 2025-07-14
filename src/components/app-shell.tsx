@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -19,9 +20,29 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Home, Calendar, LogOut } from "lucide-react";
 import { Logo } from "./icons";
+import { useAuth } from "@/contexts/auth-context";
+import { auth } from "@/lib/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      router.push("/login");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+  
+  const getInitials = (email: string | null | undefined) => {
+    if (!email) return "U";
+    return email.substring(0, 1).toUpperCase();
+  };
 
   return (
     <SidebarProvider>
@@ -55,14 +76,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <SidebarFooter>
            <div className="flex items-center gap-3">
               <Avatar>
-                <AvatarImage src="https://placehold.co/40x40.png" alt="User" data-ai-hint="person avatar" />
-                <AvatarFallback>U</AvatarFallback>
+                <AvatarImage src={user?.photoURL || `https://placehold.co/40x40.png`} alt="User" data-ai-hint="person avatar" />
+                <AvatarFallback>{getInitials(user?.email)}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col text-sm">
-                <span className="font-semibold">Usuário</span>
-                <span className="text-muted-foreground">usuario@exemplo.com</span>
+                <span className="font-semibold">{user?.displayName || 'Usuário'}</span>
+                <span className="text-muted-foreground">{user?.email}</span>
               </div>
-              <Button variant="ghost" size="icon" className="ml-auto">
+              <Button variant="ghost" size="icon" className="ml-auto" onClick={handleSignOut}>
                 <LogOut />
               </Button>
             </div>
