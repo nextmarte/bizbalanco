@@ -16,6 +16,7 @@ import { getTransactions, addTransaction } from "@/lib/services";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/auth-context";
 import { useRouter } from "next/navigation";
+import { FinancialAgentWidget } from "@/components/dashboard/financial-agent-widget";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -71,7 +72,8 @@ export default function DashboardPage() {
   const handleAddTransaction = async (newTransaction: Omit<Transaction, 'id' | 'userId'>) => {
     if (!user) return;
     try {
-      const addedTransaction = await addTransaction(newTransaction, user.uid);
+      const transactionWithDate = { ...newTransaction, date: new Date(newTransaction.date) };
+      const addedTransaction = await addTransaction(transactionWithDate, user.uid);
       setTransactions(prev => [...prev, addedTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
       console.error("Failed to add transaction:", error);
@@ -176,6 +178,7 @@ export default function DashboardPage() {
             </DialogContent>
         </Dialog>
       </div>
+       {!loading && <FinancialAgentWidget transactions={transactions} />}
     </AppShell>
   );
 }
