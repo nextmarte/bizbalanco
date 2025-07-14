@@ -37,7 +37,11 @@ async function initializeData() {
                 type: "revenue",
             };
             const newTransactionRef = doc(transactionsCol);
-            batch.set(newTransactionRef, initialTransaction);
+            // Ao inicializar, converta a data para Timestamp
+            batch.set(newTransactionRef, {
+                ...initialTransaction,
+                date: Timestamp.fromDate(initialTransaction.date)
+            });
             needsCommit = true;
         }
 
@@ -50,7 +54,11 @@ async function initializeData() {
                 endTime: "11:00",
             };
             const newAppointmentRef = doc(appointmentsCol);
-            batch.set(newAppointmentRef, initialAppointment);
+            // Ao inicializar, converta a data para Timestamp
+            batch.set(newAppointmentRef, {
+                ...initialAppointment,
+                date: Timestamp.fromDate(initialAppointment.date)
+            });
             needsCommit = true;
         }
 
@@ -86,7 +94,11 @@ export async function getTransactions(): Promise<Transaction[]> {
 }
 
 export async function addTransaction(transaction: Omit<Transaction, 'id'>): Promise<Transaction> {
-    const docRef = await addDoc(collection(db, 'transactions'), transaction);
+    const transactionWithTimestamp = {
+        ...transaction,
+        date: Timestamp.fromDate(transaction.date)
+    };
+    const docRef = await addDoc(collection(db, 'transactions'), transactionWithTimestamp);
     return { id: docRef.id, ...transaction };
 }
 
@@ -110,6 +122,10 @@ export async function getAppointments(): Promise<Appointment[]> {
 }
 
 export async function addAppointment(appointment: Omit<Appointment, 'id'>): Promise<Appointment> {
-    const docRef = await addDoc(collection(db, 'appointments'), appointment);
+     const appointmentWithTimestamp = {
+        ...appointment,
+        date: Timestamp.fromDate(appointment.date)
+    };
+    const docRef = await addDoc(collection(db, 'appointments'), appointmentWithTimestamp);
     return { id: docRef.id, ...appointment };
 }
