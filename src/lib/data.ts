@@ -17,11 +17,11 @@ export const defaultCategories = [
 ];
 
 export const transactions: Transaction[] = [
-  { id: '1', type: 'revenue', description: 'Projeto de web design', amount: 2500, date: new Date('2024-05-15T00:00:00'), category: 'Freelance' },
-  { id: '2', type: 'expense', description: 'Assinatura mensal de software', amount: 49.99, date: new Date('2024-05-12T00:00:00'), category: 'Software' },
-  { id: '3', type: 'expense', description: 'Café e lanches para o escritório', amount: 75.50, date: new Date('2024-05-10T00:00:00'), category: 'Material de Escritório' },
-  { id: '4', type: 'revenue', description: 'Serviços de consultoria', amount: 1200, date: new Date('2024-05-05T00:00:00'), category: 'Freelance' },
-  { id: '5', type: 'expense', description: 'Anúncios em redes sociais', amount: 250, date: new Date('2024-05-02T00:00:00'), category: 'Marketing' },
+  { id: '1', type: 'revenue', description: 'Projeto de web design', amount: 2500, date: new Date('2024-05-15T00:00:00.000Z'), category: 'Freelance' },
+  { id: '2', type: 'expense', description: 'Assinatura mensal de software', amount: 49.99, date: new Date('2024-05-12T00:00:00.000Z'), category: 'Software' },
+  { id: '3', type: 'expense', description: 'Café e lanches para o escritório', amount: 75.50, date: new Date('2024-05-10T00:00:00.000Z'), category: 'Material de Escritório' },
+  { id: '4', type: 'revenue', description: 'Serviços de consultoria', amount: 1200, date: new Date('2024-05-05T00:00:00.000Z'), category: 'Freelance' },
+  { id: '5', type: 'expense', description: 'Anúncios em redes sociais', amount: 250, date: new Date('2024-05-02T00:00:00.000Z'), category: 'Marketing' },
 ];
 
 export const appointments: Appointment[] = [
