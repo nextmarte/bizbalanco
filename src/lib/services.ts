@@ -63,6 +63,9 @@ async function initializeData() {
         isInitialized = true;
     } catch (error) {
         console.error("Failed to initialize collections:", error);
+        // We set initialized to true even on error to avoid retrying on every call.
+        // A more robust solution might involve a retry mechanism with a backoff strategy.
+        isInitialized = true;
     }
 }
 

@@ -48,7 +48,14 @@ export default function AppointmentsPage() {
   }, [appointments, selectedDate]);
 
   const handleAddAppointment = async (newAppointment: Omit<Appointment, 'id' | 'date'>) => {
-    if (!selectedDate) return;
+    if (!selectedDate) {
+        toast({
+            variant: "destructive",
+            title: "Data não selecionada",
+            description: "Por favor, selecione uma data para adicionar o compromisso.",
+        });
+        return;
+    }
     try {
         const appointmentData = { ...newAppointment, date: selectedDate };
         const addedAppointment = await addAppointment(appointmentData);
