@@ -32,7 +32,6 @@ export async function converseWithAgent(input: FinancialAgentInput): Promise<Fin
   return financialAgentFlow(input);
 }
 
-
 const financialAgentFlow = ai.defineFlow(
   {
     name: 'financialAgentFlow',
@@ -40,31 +39,29 @@ const financialAgentFlow = ai.defineFlow(
     outputSchema: FinancialAgentOutputSchema,
   },
   async (input) => {
-    const prompt = `Você é o "BizBalance AI", um assistente financeiro amigável e prestativo. Sua tarefa é ajudar o usuário a entender suas finanças com base nas transações fornecidas. Seja conciso, útil e use um tom conversacional.
+    
+    // The history of the conversation, excluding the most recent message.
+    const history = input.messages.slice(0, -1).map(m => ({
+        role: m.role,
+        content: [{ text: m.content }],
+    }));
+    
+    // The most recent message from the user.
+    const lastUserMessage = input.messages[input.messages.length - 1]?.content || '';
 
-Aqui estão as transações do usuário no formato JSON:
+    const systemPrompt = `Você é o "BizBalance AI", um assistente financeiro amigável e prestativo. Sua tarefa é ajudar o usuário a entender suas finanças com base nas transações fornecidas. Seja conciso, útil e use um tom conversacional.
+
+Aqui estão as transações do usuário no formato JSON. Use-as para responder a quaisquer perguntas que o usuário tenha sobre suas finanças:
 \`\`\`json
-{{{transactions}}}
+${input.transactions}
 \`\`\`
-
-Histórico da conversa atual:
-{{#each messages}}
-{{#if (eq role 'user')}}
-Usuário: {{{content}}}
-{{else}}
-Assistente: {{{content}}}
-{{/if}}
-{{/each}}
-Assistente:`;
+`;
 
     const llmResponse = await ai.generate({
-      prompt: prompt,
-      history: input.messages.map(m => ({ role: m.role, content: [{ text: m.content }] })),
       model: 'googleai/gemini-2.0-flash',
-      context: {
-        transactions: input.transactions,
-        messages: input.messages,
-      }
+      history: history,
+      system: systemPrompt,
+      prompt: lastUserMessage,
     });
     
     return {
