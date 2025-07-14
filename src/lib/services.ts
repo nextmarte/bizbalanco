@@ -8,9 +8,11 @@ import type { Transaction, Appointment } from './types';
 let isInitialized = false;
 
 async function initializeData() {
+    // If initialization has already been attempted (successfully or not), skip.
     if (isInitialized) {
         return;
     }
+    isInitialized = true; // Set immediately to prevent multiple attempts
 
     try {
         const transactionsCol = collection(db, 'transactions');
@@ -18,13 +20,13 @@ async function initializeData() {
 
         const transactionsSnapshot = await getCountFromServer(transactionsCol);
         const appointmentsSnapshot = await getCountFromServer(appointmentsCol);
-
+        
         const batch = writeBatch(db);
         let needsCommit = false;
 
         if (transactionsSnapshot.data().count === 0) {
             console.log('Initializing transactions collection with sample data...');
-            const initialTransaction: Omit<Transaction, 'id' | 'date'> & { date: Date } = {
+            const initialTransaction: Omit<Transaction, 'id'> = {
                 amount: 120,
                 category: "Freelance",
                 date: new Date(),
@@ -41,7 +43,7 @@ async function initializeData() {
 
         if (appointmentsSnapshot.data().count === 0) {
             console.log('Initializing appointments collection with sample data...');
-            const initialAppointment: Omit<Appointment, 'id' | 'date'> & { date: Date } = {
+            const initialAppointment: Omit<Appointment, 'id'> = {
                 title: "Reunião de Alinhamento",
                 date: new Date(),
                 startTime: "10:00",
@@ -60,12 +62,8 @@ async function initializeData() {
             console.log('Initial data committed to Firestore.');
         }
 
-        isInitialized = true;
     } catch (error) {
         console.error("Failed to initialize collections:", error);
-        // We set initialized to true even on error to avoid retrying on every call.
-        // A more robust solution might involve a retry mechanism with a backoff strategy.
-        isInitialized = true;
     }
 }
 
@@ -91,9 +89,11 @@ export async function getTransactions(): Promise<Transaction[]> {
 export async function addTransaction(transaction: Omit<Transaction, 'id'>): Promise<Transaction> {
     const transactionWithTimestamp = {
         ...transaction,
+        // Ensure date is converted to Firestore Timestamp before saving
         date: Timestamp.fromDate(new Date(transaction.date))
     };
     const docRef = await addDoc(collection(db, 'transactions'), transactionWithTimestamp);
+    // Return the original transaction object with the new ID
     return { id: docRef.id, ...transaction };
 }
 
@@ -119,8 +119,10 @@ export async function getAppointments(): Promise<Appointment[]> {
 export async function addAppointment(appointment: Omit<Appointment, 'id'>): Promise<Appointment> {
      const appointmentWithTimestamp = {
         ...appointment,
+        // Ensure date is converted to Firestore Timestamp before saving
         date: Timestamp.fromDate(new Date(appointment.date))
     };
     const docRef = await addDoc(collection(db, 'appointments'), appointmentWithTimestamp);
+    // Return the original appointment object with the new ID
     return { id: docRef.id, ...appointment };
 }

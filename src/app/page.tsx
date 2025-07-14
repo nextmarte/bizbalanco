@@ -61,7 +61,8 @@ export default function DashboardPage() {
   const handleAddTransaction = async (newTransaction: Omit<Transaction, 'id'>) => {
     try {
       const addedTransaction = await addTransaction(newTransaction);
-      setTransactions(prev => [addedTransaction, ...prev]);
+      // Sort by date descending to keep the list ordered
+      setTransactions(prev => [...prev, addedTransaction].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
     } catch (error) {
       console.error("Failed to add transaction:", error);
       toast({
