@@ -3,20 +3,43 @@
 import * as React from "react";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
-import { FileDown, FileUp, PlusCircle } from "lucide-react";
+import { FileDown, FileUp, PlusCircle, Loader2 } from "lucide-react";
 import { FinancialSummaryCards } from "@/components/dashboard/financial-summary-cards";
 import { RecentTransactions } from "@/components/dashboard/recent-transactions";
 import { AddTransactionSheet } from "@/components/dashboard/add-transaction-sheet";
 import type { Transaction } from "@/lib/types";
-import { transactions as initialTransactions } from "@/lib/data";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { format } from "date-fns";
+import { getTransactions, addTransaction } from "@/lib/services";
+import { useToast } from "@/hooks/use-toast";
 
 export default function DashboardPage() {
-  const [transactions, setTransactions] = React.useState<Transaction[]>(initialTransactions);
+  const [transactions, setTransactions] = React.useState<Transaction[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [isImportDialogOpen, setIsImportDialogOpen] = React.useState(false);
+  const { toast } = useToast();
+
+  React.useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        const fetchedTransactions = await getTransactions();
+        setTransactions(fetchedTransactions);
+      } catch (error) {
+        console.error("Failed to fetch transactions:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao Carregar Dados",
+          description: "Não foi possível buscar as transações do banco de dados.",
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, [toast]);
 
   const { totalRevenue, totalExpenses, totalProfit } = React.useMemo(() => {
     let revenue = 0;
@@ -35,11 +58,18 @@ export default function DashboardPage() {
     };
   }, [transactions]);
 
-  const handleAddTransaction = (newTransaction: Omit<Transaction, 'id'>) => {
-    setTransactions(prev => [
-      { ...newTransaction, id: crypto.randomUUID() },
-      ...prev,
-    ]);
+  const handleAddTransaction = async (newTransaction: Omit<Transaction, 'id'>) => {
+    try {
+      const addedTransaction = await addTransaction(newTransaction);
+      setTransactions(prev => [addedTransaction, ...prev]);
+    } catch (error) {
+      console.error("Failed to add transaction:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao Salvar",
+        description: "Não foi possível adicionar a nova transação.",
+      });
+    }
   };
   
   const handleExportTransactions = () => {
@@ -89,14 +119,23 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
+        
+        {loading ? (
+            <div className="flex justify-center items-center h-64">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        ) : (
+          <>
+            <FinancialSummaryCards
+              totalRevenue={totalRevenue}
+              totalExpenses={totalExpenses}
+              totalProfit={totalProfit}
+            />
 
-        <FinancialSummaryCards
-          totalRevenue={totalRevenue}
-          totalExpenses={totalExpenses}
-          totalProfit={totalProfit}
-        />
+            <RecentTransactions transactions={transactions} />
+          </>
+        )}
 
-        <RecentTransactions transactions={transactions} />
 
         <AddTransactionSheet
           isOpen={isSheetOpen}

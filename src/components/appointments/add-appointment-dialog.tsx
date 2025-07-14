@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import type { Appointment } from "@/lib/types";
+import { Loader2 } from "lucide-react";
 
 const appointmentSchema = z.object({
   title: z.string().min(1, "O título é obrigatório."),
@@ -22,7 +23,7 @@ type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 interface AddAppointmentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onAppointmentAdded: (appointment: Omit<Appointment, 'id' | 'date'>) => void;
+  onAppointmentAdded: (appointment: Omit<Appointment, 'id' | 'date'>) => Promise<void>;
   selectedDate: Date | undefined;
 }
 
@@ -44,8 +45,8 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
     }
   }, [isOpen, form]);
 
-  const onSubmit = (data: AppointmentFormValues) => {
-    onAppointmentAdded(data);
+  const onSubmit = async (data: AppointmentFormValues) => {
+    await onAppointmentAdded(data);
     onOpenChange(false);
     toast({
         title: "Compromisso Adicionado",
@@ -105,7 +106,10 @@ export function AddAppointmentDialog({ isOpen, onOpenChange, onAppointmentAdded,
             </div>
             <DialogFooter className="pt-4">
               <Button variant="outline" onClick={() => onOpenChange(false)}>Cancelar</Button>
-              <Button type="submit">Adicionar Compromisso</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Adicionar Compromisso
+              </Button>
             </DialogFooter>
           </form>
         </Form>

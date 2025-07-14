@@ -33,7 +33,7 @@ type TransactionFormValues = z.infer<typeof transactionSchema>;
 interface AddTransactionSheetProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
-  onTransactionAdded: (transaction: Omit<Transaction, "id">) => void;
+  onTransactionAdded: (transaction: Omit<Transaction, "id">) => Promise<void>;
 }
 
 export function AddTransactionSheet({ isOpen, onOpenChange, onTransactionAdded }: AddTransactionSheetProps) {
@@ -51,8 +51,8 @@ export function AddTransactionSheet({ isOpen, onOpenChange, onTransactionAdded }
     },
   });
 
-  const onSubmit = (data: TransactionFormValues) => {
-    onTransactionAdded(data);
+  const onSubmit = async (data: TransactionFormValues) => {
+    await onTransactionAdded(data);
     form.reset();
     onOpenChange(false);
     toast({
@@ -212,7 +212,10 @@ export function AddTransactionSheet({ isOpen, onOpenChange, onTransactionAdded }
               )}
             />
             <SheetFooter className="pt-4">
-              <Button type="submit">Adicionar Transação</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Adicionar Transação
+              </Button>
             </SheetFooter>
           </form>
         </Form>
