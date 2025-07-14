@@ -37,6 +37,7 @@ export default function AppointmentsPage() {
         setLoading(false);
       }
     }
+    // O serviço de inicialização garante que isso só execute após a conexão com o Firebase
     loadData();
   }, [toast]);
 
